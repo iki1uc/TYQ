@@ -1,61 +1,67 @@
 // ============================================================
-// PIPELINE1 · RAW ENGINE · Basis-Achse
+// WORK-PIPELINE · UNIVERSAL ACCESS LAYER
+// ============================================================
+//
+// Aufgabe:
+// - nutzt ALLE Pipelines (P0, P1, P2, P4)
+// - nutzt ALLE Engines (RITH, EVO, TYQ, TEAM)
+// - startet NICHTS
+// - blockiert NICHTS
+// - ist reine RUNTIME
+// - ist reiner WORK-AROUND
 // ============================================================
 
-class Pipeline1 {
+class WorkPipeline {
     constructor() {
-        this.raw = false;
-        this.wake = false;
-        this.initDone = false;
+        this.pipelines = {};
+        this.engines = {};
+        this.ready = false;
     }
 
-    // 1. RAW aktivieren
-    runRAW() {
-        this.raw = true;
-        log("🌅 PIPELINE1 · RAW aktiviert", "mech");
-        this.updateUI();
+    // 1. Scannt ALLES, was existiert
+    scan() {
+        this.pipelines = {
+            P0: window.P0 || null,
+            P1: window.P1 || null,
+            P2: window.P2 || null,
+            P4: window.P4 || null
+        };
+
+        this.engines = {
+            RITH: window.RITH_ENGINE || null,
+            EVO: window.EVO || null,
+            TYQ: window.TYQ || null,
+            TEAM: window.TEAM || null
+        };
+
+        this.ready = true;
+        console.log("🌀 WORK-PIPELINE · RUNTIME aktiv");
+        console.log("Pipelines:", this.pipelines);
+        console.log("Engines:", this.engines);
     }
 
-    // 2. WAKE erzeugen
-    runWAKE() {
-        if (!this.raw) {
-            log("⚠️ PIPELINE1 · WAKE verweigert (RAW fehlt)", "human");
-            return;
+    // 2. Zugriff auf ALLES erlauben
+    use(name) {
+        if (!this.ready) {
+            console.log("⚠️ WORK-PIPELINE · nicht bereit");
+            return null;
         }
-        this.wake = true;
-        log("⚡ PIPELINE1 · WAKE erzeugt", "mech");
-        this.updateUI();
-    }
 
-    // 3. INIT (Startsignal für RITH / EVO / Pipeline2)
-    runINIT() {
-        if (!this.wake) {
-            log("⚠️ PIPELINE1 · INIT verweigert (WAKE fehlt)", "human");
-            return;
+        if (this.pipelines[name]) {
+            console.log(`🟢 Zugriff auf Pipeline ${name}`);
+            return this.pipelines[name];
         }
-        this.initDone = true;
-        log("🌀 PIPELINE1 · INIT abgeschlossen · System bereit", "gold");
-        this.updateUI();
-    }
 
-    // 4. UI aktualisieren
-    updateUI() {
-        const rawEl = document.getElementById("p1_raw");
-        const wakeEl = document.getElementById("p1_wake");
-        const initEl = document.getElementById("p1_init");
+        if (this.engines[name]) {
+            console.log(`🟢 Zugriff auf Engine ${name}`);
+            return this.engines[name];
+        }
 
-        if (rawEl) rawEl.textContent = this.raw ? "AKTIV" : "INAKTIV";
-        if (wakeEl) wakeEl.textContent = this.wake ? "AKTIV" : "INAKTIV";
-        if (initEl) initEl.textContent = this.initDone ? "FERTIG" : "WARTET";
-    }
-
-    // 5. Voller Lauf
-    runFull() {
-        this.runRAW();
-        setTimeout(() => this.runWAKE(), 200);
-        setTimeout(() => this.runINIT(), 400);
+        console.log(`🔴 ${name} nicht gefunden`);
+        return null;
     }
 }
 
-// ── INSTANZ ──
-const pipeline1 = new Pipeline1();
+// Instanz
+const WORK = new WorkPipeline();
+WORK.scan();
