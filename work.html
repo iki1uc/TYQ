@@ -1,0 +1,61 @@
+// ============================================================
+// PIPELINE1 · RAW ENGINE · Basis-Achse
+// ============================================================
+
+class Pipeline1 {
+    constructor() {
+        this.raw = false;
+        this.wake = false;
+        this.initDone = false;
+    }
+
+    // 1. RAW aktivieren
+    runRAW() {
+        this.raw = true;
+        log("🌅 PIPELINE1 · RAW aktiviert", "mech");
+        this.updateUI();
+    }
+
+    // 2. WAKE erzeugen
+    runWAKE() {
+        if (!this.raw) {
+            log("⚠️ PIPELINE1 · WAKE verweigert (RAW fehlt)", "human");
+            return;
+        }
+        this.wake = true;
+        log("⚡ PIPELINE1 · WAKE erzeugt", "mech");
+        this.updateUI();
+    }
+
+    // 3. INIT (Startsignal für RITH / EVO / Pipeline2)
+    runINIT() {
+        if (!this.wake) {
+            log("⚠️ PIPELINE1 · INIT verweigert (WAKE fehlt)", "human");
+            return;
+        }
+        this.initDone = true;
+        log("🌀 PIPELINE1 · INIT abgeschlossen · System bereit", "gold");
+        this.updateUI();
+    }
+
+    // 4. UI aktualisieren
+    updateUI() {
+        const rawEl = document.getElementById("p1_raw");
+        const wakeEl = document.getElementById("p1_wake");
+        const initEl = document.getElementById("p1_init");
+
+        if (rawEl) rawEl.textContent = this.raw ? "AKTIV" : "INAKTIV";
+        if (wakeEl) wakeEl.textContent = this.wake ? "AKTIV" : "INAKTIV";
+        if (initEl) initEl.textContent = this.initDone ? "FERTIG" : "WARTET";
+    }
+
+    // 5. Voller Lauf
+    runFull() {
+        this.runRAW();
+        setTimeout(() => this.runWAKE(), 200);
+        setTimeout(() => this.runINIT(), 400);
+    }
+}
+
+// ── INSTANZ ──
+const pipeline1 = new Pipeline1();
