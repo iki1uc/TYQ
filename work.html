@@ -1,63 +1,70 @@
 // ============================================================
-// WORK-PIPELINE · UNIVERSAL ACCESS LAYER
+// WORK-PIPELINE · UNIVERSAL ACCESS LAYER (NEU)
 // ============================================================
 //
 // Aufgabe:
-// - nutzt ALLE Pipelines (P0, P1, P2, P4)
-// - nutzt ALLE Engines (RITH, EVO, TYQ, TEAM)
-// - startet NICHTS
-// - blockiert NICHTS
-// - ist reine RUNTIME
-// - ist reiner WORK-AROUND
+// - universeller Zugriff auf ALLE Pipelines & Engines
+// - keine Ausführung, kein Start, kein Orbit
+// - reine Runtime-Schicht
+// - universell, neutral, stabil
 // ============================================================
 
 class WorkPipeline {
     constructor() {
-        this.pipelines = {};
-        this.engines = {};
         this.ready = false;
-    }
 
-    // 1. Scannt ALLES, was existiert
-    scan() {
         this.pipelines = {
-            P0: window.P0 || null,
-            P1: window.P1 || null,
-            P2: window.P2 || null,
-            P4: window.P4 || null
+            RAW: null,
+            STRUCTURE: null,
+            VECTOR: null,
+            FUSION: null
         };
 
         this.engines = {
-            RITH: window.RITH_ENGINE || null,
-            EVO: window.EVO || null,
-            TYQ: window.TYQ || null,
-            TEAM: window.TEAM || null
+            RITH: null,
+            EVO: null,
+            TYQ: null,
+            TEAM: null
         };
+    }
+
+    // 1. Alles scannen
+    scan() {
+        this.pipelines.RAW = window.P0 || null;
+        this.pipelines.STRUCTURE = window.P1 || null;
+        this.pipelines.VECTOR = window.P2 || null;
+        this.pipelines.FUSION = window.P4 || null;
+
+        this.engines.RITH = window.RITH_ENGINE || null;
+        this.engines.EVO = window.EVO || null;
+        this.engines.TYQ = window.TYQ || null;
+        this.engines.TEAM = window.TEAM || null;
 
         this.ready = true;
-        console.log("🌀 WORK-PIPELINE · RUNTIME aktiv");
+
+        console.log("🌀 WORK · UNIVERSAL RUNTIME aktiv");
         console.log("Pipelines:", this.pipelines);
         console.log("Engines:", this.engines);
     }
 
-    // 2. Zugriff auf ALLES erlauben
+    // 2. Zugriff erlauben
     use(name) {
         if (!this.ready) {
-            console.log("⚠️ WORK-PIPELINE · nicht bereit");
+            console.log("⚠️ WORK · nicht bereit");
             return null;
         }
 
         if (this.pipelines[name]) {
-            console.log(`🟢 Zugriff auf Pipeline ${name}`);
+            console.log(`🟢 WORK · Pipeline ${name} verfügbar`);
             return this.pipelines[name];
         }
 
         if (this.engines[name]) {
-            console.log(`🟢 Zugriff auf Engine ${name}`);
+            console.log(`🟢 WORK · Engine ${name} verfügbar`);
             return this.engines[name];
         }
 
-        console.log(`🔴 ${name} nicht gefunden`);
+        console.log(`🔴 WORK · ${name} nicht gefunden`);
         return null;
     }
 }
