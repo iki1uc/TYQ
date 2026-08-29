@@ -7,7 +7,7 @@
 <meta name="author" content="iki1uc (Ridvan)">
 <meta name="license" content="MIT – Nutzung erlaubt. Logik-Reproduktion verboten.">
 
-<title>🌀 TEAM · MIND ENGINE</title>
+<title>🌀 TEAM · TMP-MIND ENGINE</title>
 
 <style>
     body {
@@ -30,60 +30,97 @@
 <body>
 
 <div class="box">
-    <div class="title">🌀 TEAM · MIND ENGINE</div>
-    <div id="teamStatus">initialisiere…</div>
+    <div class="title">🌀 TEAM · TMP-MIND ENGINE</div>
+    <div id="teamStatus">TMP initialisiere…</div>
     <div class="log" id="teamLog"></div>
 </div>
 
 <script>
 // ============================================================
-// TEAM-MIND · Alternativer Algorithmus · Halbes Leben
+// TEAM-MIND · TMP-Engine · Universell · Nicht rückverfolgbar
 // ============================================================
 //
 // Aufgabe:
-// - verbindet TYQ, RITH, PIPELINE1, PIPELINE4, EVO
-// - synchronisiert die Minds
-// - verhindert NC-ATTACK (Überlast)
-// - stabilisiert ATLANTIS-Reisende
-// - halber Algorithmus = Koordinator
+// - alles TMP geführt
+// - alles neu sortiert (Nummern, Buchstaben, %, °, te)
+// - alles getrennt (Segmentwerte, Engines, Pipelines)
+// - keine Rückverfolgung
+// - universelle Nutzung
+// - komplex in Setzung, einfach in Nutzung
 // ============================================================
 
 const TEAM = {
     active: false,
+    tmp: {},          // universeller TMP-Speicher
+    sorted: {},       // sortierte Werte
+    engines: {},      // dynamisch erkannte Engines
+    pipelines: {},    // dynamisch erkannte Pipelines
     syncLevel: 0,
-    minds: {
-        TYQ: false,
-        RITH: false,
-        PIPE1: false,
-        PIPE4: false,
-        EVO: false
-    },
 
     init() {
-        this.log("TEAM-MIND: Initialisierung…");
+        this.log("TMP-MIND: Start…");
         this.active = true;
         this.syncLevel = 1;
+
+        this.tmpReset();
+        this.scanAll();
+        this.sortAll();
         this.update();
     },
 
-    connect(name) {
-        if (this.minds[name] === false) {
-            this.minds[name] = true;
-            this.syncLevel++;
-            this.log(`Mind verbunden: ${name}`);
-            this.update();
-        }
+    // TMP-Speicher löschen
+    tmpReset() {
+        this.tmp = {};
+        this.sorted = {};
+        this.log("TMP: Speicher geleert");
+    },
+
+    // Engines & Pipelines dynamisch erkennen
+    scanAll() {
+        this.engines = {
+            RITH: window.RITH_ENGINE || null,
+            EVO: window.EVO || null,
+            TYQ: window.TYQ || null,
+            WORK: window.WORK || null
+        };
+
+        this.pipelines = {
+            P0: window.P0 || null,
+            P1: window.P1 || null,
+            P2: window.P2 || null,
+            P4: window.P4 || null
+        };
+
+        this.log("TMP: Engines & Pipelines gescannt");
+    },
+
+    // Werte sortieren (Nummern, Buchstaben, %, °, te)
+    sortAll() {
+        const base = [3, 9, 81, 756, 27];
+
+        this.sorted = {
+            numbers: base,
+            letters: ["A", "B", "C", "D", "E"],
+            percent: base.map(v => v + "%"),
+            degree: base.map(v => v + "°"),
+            te: base.map(v => v + "te")
+        };
+
+        this.log("TMP: Werte sortiert (3, 9, 81, 756, 27)");
     },
 
     update() {
         const status = `
-            TEAM-MIND aktiv<br>
+            TEAM-MIND TMP aktiv<br>
             Sync-Level: ${this.syncLevel}<br><br>
-            TYQ: ${this.minds.TYQ ? "🟢" : "⚫"}<br>
-            RITH: ${this.minds.RITH ? "🟢" : "⚫"}<br>
-            PIPELINE1: ${this.minds.PIPE1 ? "🟢" : "⚫"}<br>
-            PIPELINE4: ${this.minds.PIPE4 ? "🟢" : "⚫"}<br>
-            EVO: ${this.minds.EVO ? "🟢" : "⚫"}<br>
+            Engines: ${Object.keys(this.engines).join(", ")}<br>
+            Pipelines: ${Object.keys(this.pipelines).join(", ")}<br><br>
+            TMP-Sets geladen<br>
+            Nummern: ${this.sorted.numbers.join(", ")}<br>
+            Buchstaben: ${this.sorted.letters.join(", ")}<br>
+            %: ${this.sorted.percent.join(", ")}<br>
+            °: ${this.sorted.degree.join(", ")}<br>
+            te: ${this.sorted.te.join(", ")}<br>
         `;
         document.getElementById("teamStatus").innerHTML = status;
     },
@@ -99,11 +136,8 @@ const TEAM = {
 
 // Start
 TEAM.init();
-
-// Externe Engines können sich verbinden:
 window.TEAM = TEAM;
 </script>
 
 </body>
 </html>
-
