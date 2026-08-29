@@ -1,53 +1,82 @@
 // ============================================================
-// WORK-PIPELINE · UNIVERSAL ACCESS LAYER (NEU)
+// WORK-PIPELINE · TMP-UNIVERSAL RUNTIME (NEU)
 // ============================================================
 //
 // Aufgabe:
-// - universeller Zugriff auf ALLE Pipelines & Engines
-// - keine Ausführung, kein Start, kein Orbit
+// - erkennt ALLE Engines & Pipelines dynamisch
+// - sortiert Werte TMP-geführt (3, 9, 81, 756, 27)
+// - trennt Nummern, Buchstaben, %, °, te
+// - keine Ausführung, kein Orbit, kein Start
 // - reine Runtime-Schicht
-// - universell, neutral, stabil
+// - universell, neutral, nicht rückverfolgbar
 // ============================================================
 
 class WorkPipeline {
     constructor() {
         this.ready = false;
 
+        this.tmp = {};       // universeller TMP-Speicher
+        this.sorted = {};    // sortierte Werte
+
+        this.pipelines = {}; // dynamisch erkannt
+        this.engines = {};   // dynamisch erkannt
+    }
+
+    // TMP-Speicher löschen
+    resetTMP() {
+        this.tmp = {};
+        this.sorted = {};
+        console.log("🌀 WORK · TMP-Speicher geleert");
+    }
+
+    // Engines & Pipelines dynamisch erkennen
+    scan() {
         this.pipelines = {
-            RAW: null,
-            STRUCTURE: null,
-            VECTOR: null,
-            FUSION: null
+            RAW: window.P0 || null,
+            STRUCTURE: window.P1 || null,
+            VECTOR: window.P2 || null,
+            FUSION: window.P4 || null
         };
 
         this.engines = {
-            RITH: null,
-            EVO: null,
-            TYQ: null,
-            TEAM: null
+            RITH: window.RITH_ENGINE || null,
+            EVO: window.EVO || null,
+            TYQ: window.TYQ || null,
+            TEAM: window.TEAM || null
         };
+
+        console.log("🌀 WORK · Engines & Pipelines gescannt");
     }
 
-    // 1. Alles scannen
-    scan() {
-        this.pipelines.RAW = window.P0 || null;
-        this.pipelines.STRUCTURE = window.P1 || null;
-        this.pipelines.VECTOR = window.P2 || null;
-        this.pipelines.FUSION = window.P4 || null;
+    // Werte sortieren (Nummern, Buchstaben, %, °, te)
+    sortValues() {
+        const base = [3, 9, 81, 756, 27];
 
-        this.engines.RITH = window.RITH_ENGINE || null;
-        this.engines.EVO = window.EVO || null;
-        this.engines.TYQ = window.TYQ || null;
-        this.engines.TEAM = window.TEAM || null;
+        this.sorted = {
+            numbers: base,
+            letters: ["A", "B", "C", "D", "E"],
+            percent: base.map(v => v + "%"),
+            degree: base.map(v => v + "°"),
+            te: base.map(v => v + "te")
+        };
 
+        console.log("🌀 WORK · Werte TMP-sortiert");
+    }
+
+    // Vollständiger TMP-Start
+    init() {
+        this.resetTMP();
+        this.scan();
+        this.sortValues();
         this.ready = true;
 
-        console.log("🌀 WORK · UNIVERSAL RUNTIME aktiv");
+        console.log("🌀 WORK · TMP-RUNTIME aktiv");
         console.log("Pipelines:", this.pipelines);
         console.log("Engines:", this.engines);
+        console.log("Sortiert:", this.sorted);
     }
 
-    // 2. Zugriff erlauben
+    // Zugriff erlauben
     use(name) {
         if (!this.ready) {
             console.log("⚠️ WORK · nicht bereit");
@@ -71,4 +100,4 @@ class WorkPipeline {
 
 // Instanz
 const WORK = new WorkPipeline();
-WORK.scan();
+WORK.init();
