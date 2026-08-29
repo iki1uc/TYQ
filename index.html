@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="author" content="iki1uc (Ridvan)">
+<meta name="license" content="MIT – Nutzung erlaubt. Logik-Reproduktion verboten.">
+
+<title>🌀 RITH · WERT ENGINE · ECHT</title>
+
+<style>
+    body {
+        background:#0a0a0f; color:#0f0;
+        font-family:'Consolas', monospace;
+        padding:20px; display:flex;
+        flex-direction:column; align-items:center;
+        justify-content:center; min-height:100vh;
+        text-align:center;
+    }
+    header {
+        border:2px solid #ffd700; border-radius:12px;
+        padding:20px; max-width:300px; background:rgba(255,215,0,0.05);
+    }
+    header h1 { font-size:24px; color:#ffd700; margin:0; }
+
+    .wert {
+        border:1px solid #444; border-radius:10px;
+        padding:30px; max-width:300px;
+        font-size:40px; font-weight:bold;
+        color:#6bffa9; text-shadow:0 0 20px rgba(107,255,169,0.3);
+        margin:20px 0;
+    }
+
+    .desc {
+        border:1px solid #333; border-radius:8px;
+        padding:15px; font-size:11px; color:#888;
+        max-width:300px; line-height:1.8;
+    }
+
+    footer { margin-top:20px; color:#333; font-size:9px; }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>🌀 RITH</h1>
+    <p style="font-size:10px;color:#888;">PIPELINE4 · Algorithmus · Echt</p>
+</header>
+
+<div class="wert" id="rithWert">0</div>
+
+<div class="desc" id="rithDesc">
+    <b>RITH-WERT:</b><br>
+    Wird dynamisch aus der Segmentmatrix berechnet.<br><br>
+    RAW → STRUCTURE → VECTOR → FUSION
+</div>
+
+<footer>⚖️ EVO-GEOLEGAL · iki1uc ©</footer>
+
+<script>
+// ============================================================
+// NEUE RITH-ENGINE · echte Berechnung (0–4)
+// ============================================================
+
+// Segmentmatrix (aus deiner 3hoch3 / 8→9-Norm)
+const segs = [
+    "◉ → 3 → 9 → ◎ → 81 → 3 ↺",
+    "◉ → 9 → ◎ → 81 → ◆ → △ → ▣",
+    "3 → 9 → 81 → ◆ → 756 → △ → 27 → ▣ → 3",
+    "◎ → 81 → ◆ → △",
+    "81 → ◆ → △ → 27",
+    "756 → △ → 27 → ▣",
+    "3 → ◎ → 27",
+    "9 → 81 → ▣",
+    "◆ → 756 → △"
+];
+
+// Segment-Parser
+function parse(seg) {
+    const hasLoop = seg.includes("↺");
+    const clean = seg.replace("↺","").trim();
+    const tokens = clean.split("→").map(t => t.trim());
+    const nodes = tokens.length;
+    const edges = nodes - 1;
+    const closed = hasLoop || tokens[0] === tokens[nodes-1];
+    const norm89 = (edges === 8 && nodes === 9 && closed);
+    return { nodes, edges, closed, norm89 };
+}
+
+// Matrix-Analyse
+function analyze() {
+    const parsed = segs.map(parse);
+    return {
+        total: parsed.length,
+        closed: parsed.filter(s => s.closed).length,
+        tauglich: parsed.filter(s => s.norm89).length
+    };
+}
+
+// RITH-Berechnung
+function calcRITH() {
+    const stats = analyze();
+    let rith = 0;
+
+    // RAW
+    if (stats.total > 0) rith++;
+    else return 0;
+
+    // STRUCTURE
+    if (stats.closed > 0) rith++;
+    else return rith;
+
+    // VECTOR
+    if (stats.tauglich > 0) rith++;
+    else return rith;
+
+    // FUSION
+    if (stats.tauglich === stats.total) rith++;
+
+    return rith;
+}
+
+// UI setzen
+const rith = calcRITH();
+document.getElementById("rithWert").textContent = rith;
+document.getElementById("rithDesc").innerHTML =
+    `<b>RITH-WERT:</b><br>${rith} von 4 Stufen erreicht.<br><br>
+     RAW → STRUCTURE → VECTOR → FUSION`;
+
+</script>
+
+</body>
+</html>
