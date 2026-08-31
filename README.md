@@ -26,10 +26,14 @@ Erweiterungen dürfen nur an Modulen erfolgen, die ausdrücklich freigegeben sin
 
 Der Axiom‑Kernel ist ein freies System,
 aber die Axiom‑Technik bleibt geistiges Eigentum des Entwicklers (iki1uc).
+Das Branding „wieimmer iki1uc“ ist bewusst gewählt und Teil der Identität
+des Projekts. Es kennzeichnet alle Kernmodule und schützt die technische
+Integrität des Systems.
+
 Jeder darf den Kernel nutzen, erweitern und studieren,
 solange die Kernaxiome unangetastet bleiben.
 
 ## Lizenz
 
 Der Axiom‑Kernel ist frei nutzbar.
-Die Kerntechniken bleiben Eigentum des Entwicklers ((wieimmer iki1uc))
+Die Kerntechniken bleiben Eigentum des Entwicklers ((wieimmer iki1uc)).
