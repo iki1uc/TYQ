@@ -32,4 +32,4 @@ solange die Kernaxiome unangetastet bleiben.
 ## Lizenz
 
 Der Axiom‑Kernel ist frei nutzbar.
-Die Kerntechniken bleiben Eigentum des Entwicklers wieimmer iki1uc.
+Die Kerntechniken bleiben Eigentum des Entwicklers ((wieimmer iki1uc))
