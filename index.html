@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+<div class="pipe-node" onclick="activatePipeline()">🚀 Pipeline starten</div>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NC.maxima · TYQ · Axiom Kernel</title>
@@ -154,6 +156,90 @@
     }
     .tree-card.work-card .tree-title { color: var(--neon-gold); }
 
+// ============================================================
+// 7. AXIOMISCHE PIPELINE · PUMPE → ROHRSCHLOSSER → INDUSTRY → LOOP
+// ============================================================
+
+const pipelineStages = [
+  { name: "PUMPE", color: "var(--green)", power: 1.0 },
+  { name: "ROHRSCHLOSSER", color: "var(--accent)", power: 1.4 },
+  { name: "INDUSTRY", color: "var(--gold)", power: 2.2 },
+  { name: "128x SPEED", color: "var(--purple)", power: 3.8 },
+  { name: "LOOP", color: "var(--red)", power: 5.0 },
+  { name: "NOAOH", color: "var(--bright)", power: 7.7 } // optional
+];
+
+function activatePipeline() {
+  let stageIndex = 0;
+
+  function nextStage() {
+    const stage = pipelineStages[stageIndex];
+    const canvas = document.getElementById("flowCanvas");
+
+    // Status
+    document.getElementById("statusText").textContent =
+      `PIPELINE: ${stage.name} · POWER ${stage.power} · TYQ ACTIVE`;
+
+    // Impulse
+    for (let i = 0; i < stage.power * 4; i++) {
+      spawnParticle(stage.color);
+    }
+
+    // Anime Glow
+    canvas.style.boxShadow = `0 0 ${stage.power * 12}px ${stage.color}`;
+
+    // Weiter
+    stageIndex++;
+    if (stageIndex < pipelineStages.length) {
+      setTimeout(nextStage, 900);
+    } else {
+      // Reset Glow
+      setTimeout(() => {
+        canvas.style.boxShadow = "none";
+      }, 1500);
+    }
+  }
+
+  nextStage();
+}
+// ============================================================
+// 8. AXIOM ANIME MOVE · 387 → 420 → 489 → 81mein81
+// ============================================================
+
+function axiomAnimeMove() {
+  const seq = [
+    { sig: "387", color: "var(--green)" },
+    { sig: "420", color: "var(--accent)" },
+    { sig: "489", color: "var(--gold)" },
+    { sig: "81mein81", color: "var(--purple)" }
+  ];
+
+  let i = 0;
+
+  function pulse() {
+    const s = seq[i];
+    document.getElementById("statusText").textContent =
+      `AXIOM ${s.sig} · anime surge · iki1uc`;
+
+    for (let p = 0; p < 20; p++) {
+      spawnParticle(s.color);
+    }
+
+    i++;
+    if (i < seq.length) {
+      setTimeout(pulse, 600);
+    }
+  }
+
+  pulse();
+}
+
+// Pipeline beendet → Anime Move starten
+setTimeout(() => {
+  axiomAnimeMove();
+}, 6000);
+
+    
     /* ===== FOOTER / STATUS ===== */
     .footer {
       display: flex;
