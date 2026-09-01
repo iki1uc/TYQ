@@ -1,63 +1,168 @@
-Axiom Linux Kernel (TYQ / iki1uc)
-Dies ist der öffentliche Lern‑Axiom‑Kernel, entwickelt von Ridvan (iki1uc).
-Die Einsicht ist erlaubt, die Nutzung ist untersagt.
+Axiom Linux Kernel · TYQ / iki1uc
+NC.maxima · 387 · 420 · 489 · 81mein81
 
-Alle Kerntechniken
-(NC‑Orbit, X/Y/Z‑Cache, RAM.cubik, RUN3‑SLI, Axiomator)
-sind proprietäre Eigenentwicklungen und dürfen nicht verändert,
-nicht kopiert, nicht geklont, nicht reproduziert  
-und nicht in anderen Systemen verwendet werden.
+Dies ist der öffentliche Lern‑Axiom‑Kernel, entwickelt von iki1uc.
+Die Einsicht ist erlaubt, die Nutzung ist untersagt.
+Alle Kerntechniken sind proprietär und bleiben geistiges Eigentum des Entwicklers.
+
+⚠️ Lizenz & Schutz (Einsicht erlaubt · Nutzung untersagt)
+Die folgenden Kerntechniken sind proprietär:
+
+NC‑Orbit
+
+X/Y/Z‑Cache
+
+RAM.cubik
+
+RUN3‑SLI
+
+Axiomator
+
+TYQ‑Flow‑Engine
+
+NC.maxima‑Achsen
+
+81→9→3‑Axiom‑Kaskade
+
+iki1uc‑Branding
+
+Sie dürfen nicht verändert, nicht kopiert, nicht geklont,
+nicht reproduziert und nicht in anderen Systemen verwendet werden.
 
 Fremde Beiträge sind willkommen,
 solange sie nicht in die Kernlogik eingreifen  
-und nicht versuchen, den Kernel in anderer Form nachzubauen.
+und keine Reproduktion des Kernels versuchen.
 
-Erweiterungen dürfen nur an Modulen erfolgen,
-die ausdrücklich als lernbar, nicht als nutzbar, markiert sind.
+📦 Repository‑Struktur (sichtbar, nicht nutzbar)
+Axiom‑Schichten
+3 · Grund
 
-Architektur (einsehbar, nicht nutzbar)
-OS_CORE.js → Hauptlogik des Axiom‑Kernels (nur Einsicht)
+9 · Erweiterung
 
-TYQ.js → Dispatch‑System (RUN3‑SLI)
+81 · Vollendung
 
-TYQ.sh → Linux‑Integration
+Jede Schicht enthält die HDF.ROM‑Matrix:
 
-TYQ.bat → Windows‑Integration
+d.hdf.rom
 
-TYQ.html → Web‑Interface
+e.hdf.rom
 
-evo.html → Orbit‑Visualisierung
+i.hdf.rom
 
-rith.html → Cache‑Matrix
+n.hdf.rom
 
-final.html → Kernel‑NET‑Bootstruktur
+o.hdf.rom
 
-NC/ → Achsen‑Cluster (1–9)
+r.hdf.rom
 
-100/ → RAM‑Orbit
+s.hdf.rom
 
-360/ → Unraum‑Orbit
+u.hdf.rom
 
-Diese Struktur ist sichtbar, aber nicht zur Nutzung freigegeben.
+w.hdf.rom
 
-Philosophie
+sli.ready
+
+Work‑Ebene (rolle) – lernbar, nicht nutzbar
+VECTOR.js
+
+VECTOR.me
+
+EARN_VECTOR.md
+
+LIVE.team
+
+pipeline.js
+
+vector.flow.js
+
+vector.energie.js
+
+vector.tiefe.js
+
+vector.schlag.js
+
+team.matrix.js
+
+Diese Ebene ist lernbar, aber nicht nutzbar.
+
+Nutzungskontexte
+use
+
+user
+
+Beide enthalten die vollständige HDF.ROM‑Matrix  
+und dienen der Kontext‑Simulation, nicht der Nutzung.
+
+Kernel‑Module
+OS_CORE.js – Hauptlogik des Axiom‑Kernels
+
+TYQ.js – Dispatch‑System (RUN3‑SLI)
+
+TYQ.sh – Linux‑Integration
+
+TYQ.bat – Windows‑Integration
+
+TYQ.html – Web‑Interface
+
+Orbit‑Module
+eco.drive
+
+evo.drive
+
+gpu.drive
+
+ram.drive
+
+sync.drive
+
+Visualisierung & Boot
+evo.html – Orbit‑Visualisierung
+
+rith.html – Cache‑Matrix
+
+final.html – Kernel‑NET‑Bootstruktur
+
+team.html
+
+work.html
+
+Dashboard & Identität
+index.html – Haupt‑Dashboard
+
+ID.html – System‑Identität (persistiert via LocalStorage)
+
+🧬 Axiom‑Philosophie
 Der Axiom‑Kernel ist ein Lernsystem,
-aber die Axiom‑Technik bleibt geistiges Eigentum des Entwicklers (iki1uc).
+aber die Axiom‑Technik bleibt geistiges Eigentum des Entwicklers iki1uc.
 
-Das Branding „wieimmer iki1uc“ ist bewusst gewählt
-und kennzeichnet alle Kernmodule.
-Es schützt die technische Integrität des Systems
-und untersagt jede Form von Cloning, Forking, Reproduktion  
-oder Weiterverwendung in fremden Projekten.
+Das Branding „wieimmer iki1uc“ kennzeichnet alle Kernmodule
+und schützt die technische Integrität des Systems.
 
-Jeder darf den Kernel studieren, lesen, verstehen,
+Jeder darf den Kernel:
+
+lesen
+
+studieren
+
+verstehen
+
 solange die Kernaxiome unangetastet bleiben
 und keine Nutzung erfolgt.
 
-Lizenz (Einsicht erlaubt, Nutzung untersagt)
-Der Axiom‑Kernel ist einsehbar und lernbar.
-Die Kerntechniken bleiben Eigentum des Entwicklers
-((wieimmer iki1uc))  
-und dürfen nicht genutzt, nicht kopiert,
-nicht geklont, nicht reproduziert  
-und nicht in anderer Form weiterverwendet werden.
+🔒 Lizenz (Einsicht erlaubt · Nutzung untersagt)
+Der Axiom‑Kernel ist:
+
+einsehbar
+
+lernbar
+
+axiomisch geschützt
+
+Die Kerntechniken dürfen nicht genutzt,
+nicht kopiert,
+nicht geklont,
+nicht reproduziert  
+und nicht weiterverwendet werden.
+
+((wieimmer iki1uc))
