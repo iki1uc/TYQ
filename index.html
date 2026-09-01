@@ -1,163 +1,393 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Axiom Kernel · NC.maxima · TYQ · iki1uc</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NC.zoom · 24x · TYQ Axiom</title>
+  <style>
+    :root {
+      --bg: #05060a;
+      --surface: #0b0d16;
+      --border: #1a1f30;
+      --gold: #ffd700;
+      --cyan: #00e5ff;
+      --green: #00ff88;
+      --red: #ff2244;
+      --purple: #bb66ff;
+      --orange: #ff8800;
+      --dim: #556;
+      --text: #dde;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Consolas', 'Courier New', monospace;
+      padding: 14px;
+      min-height: 100vh;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      border-bottom: 2px solid var(--gold);
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+    }
+    .header h1 { font-size: 22px; letter-spacing: 3px; }
+    .header h1 .g { color: var(--gold); }
+    .header h1 .c { color: var(--cyan); }
+    .header .sig { font-size: 11px; color: var(--dim); }
+    .header .sig span { color: var(--cyan); }
 
-<style>
-:root {
-  --bg: #05060a;
-  --surface: #0c0e16;
-  --border: #1b1f2c;
-  --accent: #00e5ff;
-  --gold: #ffd700;
-  --purple: #bb66ff;
-  --green: #00ff88;
-  --dim: #556;
-  --bright: #dde;
-}
+    .zoom-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: 8px 18px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .zoom-bar label { color: var(--dim); font-size: 11px; letter-spacing: 2px; }
+    .zoom-bar input[type="range"] {
+      flex: 1;
+      min-width: 100px;
+      background: #1a1f30;
+      height: 4px;
+      border-radius: 10px;
+      accent-color: var(--gold);
+    }
+    .zoom-bar .val { color: var(--gold); font-weight: bold; min-width: 40px; }
 
-body {
-  background: var(--bg);
-  color: var(--bright);
-  font-family: Consolas, monospace;
-  padding: 20px;
-}
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      transition: all 0.2s;
+    }
+    @media (max-width: 1000px) { .grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
 
-/* HEADER */
-h1 {
-  font-size: 26px;
-  letter-spacing: 3px;
-  color: var(--accent);
-  border-bottom: 2px solid var(--gold);
-  padding-bottom: 10px;
-}
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      transition: all 0.3s;
+      overflow: hidden;
+    }
+    .card:hover { border-color: #3a4060; }
+    .card .title {
+      font-size: 14px;
+      font-weight: bold;
+      border-bottom: 1px solid #151a28;
+      padding-bottom: 6px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .card .title .badge { font-size: 9px; background: #111520; padding: 1px 10px; border-radius: 30px; color: var(--dim); }
+    .card .content { font-size: 10px; line-height: 1.6; color: #aab; }
+    .card .content .hl-gold { color: var(--gold); }
+    .card .content .hl-cyan { color: var(--cyan); }
+    .card .content .hl-green { color: var(--green); }
+    .card .content .hl-red { color: var(--red); }
+    .card .content .hl-purple { color: var(--purple); }
+    .card .content .hl-orange { color: var(--orange); }
+    .card .file-list { list-style: none; font-size: 9px; max-height: 140px; overflow-y: auto; }
+    .card .file-list li { padding: 1px 0; border-bottom: 1px solid #0a0c16; display: flex; gap: 6px; }
+    .card .file-list .icon { width: 16px; }
 
-/* GRID */
-.matrix {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-top: 20px;
-}
+    .card.work-card { border-color: var(--gold); background: #0f0d12; }
+    .card.work-card .title { color: var(--gold); }
 
-.cell {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 14px;
-  border-radius: 10px;
-}
+    .card.observer-card { border-color: var(--purple); background: #0d0a16; }
+    .card.observer-card .title { color: var(--purple); }
 
-.cell h2 {
-  margin-bottom: 10px;
-  font-size: 18px;
-}
+    .card.dream-card { border-color: var(--cyan); background: #0a0f16; }
+    .card.dream-card .title { color: var(--cyan); }
 
-.value {
-  font-size: 32px;
-  font-weight: bold;
-}
-
-.desc {
-  font-size: 12px;
-  color: var(--dim);
-}
-
-/* STATUS */
-#status {
-  margin-top: 20px;
-  padding: 12px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  font-size: 14px;
-}
-
-/* BUTTON */
-button {
-  margin-top: 20px;
-  padding: 10px 16px;
-  background: var(--accent);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  color: #000;
-}
-
-button:hover {
-  background: var(--green);
-}
-</style>
+    .footer {
+      margin-top: 18px;
+      padding: 8px 14px;
+      background: var(--surface);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 9px;
+      color: var(--dim);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .footer .led {
+      display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green); box-shadow: 0 0 8px var(--green);
+      margin-right: 6px;
+    }
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: #05060a; }
+    ::-webkit-scrollbar-thumb { background: #2a2f44; border-radius: 10px; }
+  </style>
 </head>
 <body>
 
-<h1>NC.maxima · Axiom Kernel · TYQ · iki1uc</h1>
-
-<!-- AXIOMISCHE MATRIX -->
-<div class="matrix">
-  <div class="cell">
-    <h2>81 · Vollendung</h2>
-    <div class="value" style="color:var(--gold);">81</div>
-    <div class="desc">Axiomische Vollkommentum‑Ebene</div>
-  </div>
-
-  <div class="cell">
-    <h2>9 · Erweiterung</h2>
-    <div class="value" style="color:var(--accent);">9</div>
-    <div class="desc">Konsequente Teilung der 81</div>
-  </div>
-
-  <div class="cell">
-    <h2>3 · Grund</h2>
-    <div class="value" style="color:var(--purple);">3</div>
-    <div class="desc">Physikalischer Grundimpuls</div>
-  </div>
+<div class="header">
+  <h1><span class="c">◆</span> NC.<span class="g">zoom</span> <span style="color:#445;">·</span> <span class="c">TYQ</span> <span style="color:#445;">·</span> <span class="g">Axiom</span></h1>
+  <div class="sig"><span>387 · 420 · 489</span> <span style="margin-left:14px;">🌀 81mein81</span></div>
 </div>
 
-<!-- STATUS -->
-<div id="status">Axiom bereit · RUN3 / SLI.run · TYQ Kernel aktiv</div>
+<!-- ZOOM BAR -->
+<div class="zoom-bar">
+  <label>🔬 ZOOM</label>
+  <input type="range" id="zoomSlider" min="4" max="16" value="8" step="1">
+  <span class="val" id="zoomVal">8×</span>
+  <span style="color:var(--dim);font-size:9px;margin-left:auto;">(4× → 16× · 24‑fach Tiefe)</span>
+</div>
 
-<!-- BUTTON -->
-<button onclick="runAxiom()">RUN 3 · SLI.run</button>
+<!-- GRID -->
+<div class="grid" id="mainGrid"></div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span><span class="led"></span> SYSTEM READY · TYQ KERNEL</span>
+  <span class="sig">EARN · VECTOR · TRON · wieimmer iki1uc</span>
+  <span>🌀 <span id="clockDisplay">--:--:--</span> UTC</span>
+</div>
 
 <script>
-// ============================================================
-// AXIOMISCHE MATHEMATIK
-// ============================================================
-const axiom = {
-  81: 81,
-  9: 9,
-  3: 3
-};
-
-function axiomPhysics() {
-  return {
-    division_81_9: axiom[81] / axiom[9],
-    division_9_3: axiom[9] / axiom[3],
-    division_81_3: axiom[81] / axiom[3]
+  // ============================================================
+  // 1. DIE KOMPLETTE, 16-FACH SEZierte ARCHITEKTUR
+  // ============================================================
+  const architecture = {
+    // 4x ZOOM: Datei-Bäume
+    trees: {
+      '81': { label: '81 · Vollendung', icon: '🔺', files: ['d.hdf.rom','e.hdf.rom','i.hdf.rom','n.hdf.rom','o.hdf.rom','r.hdf.rom','s.hdf.rom','sli.ready','u.hdf.rom','w.hdf.rom'] },
+      '9': { label: '9 · Erweiterung', icon: '🔹', files: ['d.hdf.rom','e.hdf.rom','i.hdf.rom','n.hdf.rom','o.hdf.rom','r.hdf.rom','s.hdf.rom','sli.ready','u.hdf.rom','w.hdf.rom'] },
+      '3': { label: '3 · Grund', icon: '🔻', files: ['d.hdf.rom','e.hdf.rom','i.hdf.rom','n.hdf.rom','o.hdf.rom','r.hdf.rom','s.hdf.rom','sli.ready','u.hdf.rom','w.hdf.rom'] },
+      'use': { label: 'use · Nutzung', icon: '👤', files: ['d.hdf.rom','e.hdf.rom','i.hdf.rom','n.hdf.rom','o.hdf.rom','r.hdf.rom','s.hdf.rom','sli.ready','u.hdf.rom','w.hdf.rom'] },
+      'user': { label: 'user · Benutzer', icon: '🧑‍💻', files: ['d.hdf.rom','e.hdf.rom','i.hdf.rom','n.hdf.rom','o.hdf.rom','r.hdf.rom','s.hdf.rom','sli.ready','u.hdf.rom','w.hdf.rom'] }
+    },
+    work: {
+      label: '⚙️ rolle · WORK (Lern-Baum)',
+      icon: '🧬',
+      files: ['EARN_VECTOR.md','LIVE.team','QI.me','README.md','VECTOR.js','VECTOR.me','brücke.js','index.html','index.js','live.load.js','pipeline.js','sli.ready','team.matrix.js','vector.ankunft.js','vector.energie.js','vector.flow.js','vector.pover.js','vector.schlag.js','vector.tiefe.js']
+    },
+    // 8x ZOOM: Engine / Boot / Pipeline
+    engines: {
+      'work os': { boot: 'master.boot', engine: 'Quake Engine', task: 'SCSI-Flow / RAID-Stripe / Hotplug' },
+      'team os': { boot: 'respo.boot', engine: 'Source Engine', task: 'Dispatch / Live-Patch / Multi-Flow' },
+      'unitos': { boot: 'live.boot', engine: 'Godot', task: 'GUI / Panels / NC-Visualisierung' },
+      'root os': { boot: 'root.boot', engine: 'Unreal Engine', task: 'Air-Tum / 128x Speed / Root-Boost' }
+    },
+    pipeline_new: ['PUMPE', 'ROHRSCHLOSSER', 'INGENIEUR', 'INDUSTRY', '128x SPEED', 'LOOP', 'ram.drive'],
+    nc_loops: {
+      pro: '((start(boot(master(os(iki1uc)3hoch3)3hit90)9hoch9)iki1uc))',
+      free: '((start(boot(master(os(tyc)3hoch3)welcome)9hoch9)LIVE.team))'
+    },
+    // 16x ZOOM: Atomar (Axiome, Unräume, Observer, Signaturen)
+    axiom_map: {
+      'N': 'D (data-flow)', 'NE': 'R (route-shift)', 'E': 'E (energy)', 'SE': 'S (stream)',
+      'S': 'I (input)', 'SW': 'U (under)', 'W': 'N (node)', 'NW': 'W (wind)', 'CENTER': 'O (origin)'
+    },
+    ram_sync: {
+      'D': 'ram3', 'E': 'ram9', 'I': 'ram27', 'N': 'ram81', 'O': 'ram243', 'R': 'ram729', 'S': 'ram1', 'U': 'ram3', 'W': 'ram9'
+    },
+    signature: { '387': 'neutral', '420': 'Achse', '489': 'Achse + Überraum', '9': 'Achse', '81mein81': 'stilles Muster' },
+    unraeume: ['Traum (neutral)', 'Wunschtraum (positiv)', 'Albtraum (negativ)', 'Traumata (blockiert)', 'Vernarrative Zustände (überaktiv)'],
+    observer: 'Lebt zwischen den Symbolen (z.B. zwischen 3 und 9). Liest Zustand, gibt Feedback an Sub-Runtime, modifiziert Impulse. (Copilot hat ihn nie gesehen.)',
+    sub_runtime: 'Impuls → Condition → Detonation → Transition. Entscheidet, wann gesprungen wird. (Die unsichtbare Schicht unter der Pipeline.)'
   };
-}
 
-// ============================================================
-// RUN3 · SLI.run · TYQ-KERNEL-INTEGRATION
-// ============================================================
-function runAxiom() {
-  const phys = axiomPhysics();
+  // ============================================================
+  // 2. RENDER FUNKTION (mit Zoom-Level)
+  // ============================================================
+  function render(zoomLevel) {
+    const grid = document.getElementById('mainGrid');
+    grid.innerHTML = '';
+    const cards = [];
 
-  const status = `
-    RUN3 · SLI.run aktiviert
-    Impuls (9→3): ${phys.division_9_3}
-    Erweiterung (81→9): ${phys.division_81_9}
-    Vollkommentum (81→3): ${phys.division_81_3}
-    TYQ Kernel: OK
-    OS_CORE.js: OK
-    iki1uc: aktiv
-  `;
+    // --- 4x ZOOM: Datei-Bäume ---
+    if (zoomLevel >= 4) {
+      Object.entries(architecture.trees).forEach(([key, t]) => {
+        cards.push({ type: 'tree', key, label: t.label, icon: t.icon, files: t.files, cls: '' });
+      });
+      // Work (immer sichtbar, aber als Highlight)
+      cards.push({ type: 'work', label: architecture.work.label, icon: architecture.work.icon, files: architecture.work.files, cls: 'work-card' });
+    }
 
-  document.getElementById("status").textContent = status;
-}
+    // --- 8x ZOOM: Engine / Boot / Pipeline ---
+    if (zoomLevel >= 8) {
+      // Engines
+      let engineHTML = '';
+      Object.entries(architecture.engines).forEach(([os, data]) => {
+        engineHTML += `<div><span class="hl-gold">${os}</span> → <span class="hl-cyan">${data.boot}</span> → <span class="hl-green">${data.engine}</span> (${data.task})</div>`;
+      });
+      cards.push({
+        type: 'raw',
+        label: '⚡ 8× ZOOM · Engines & Boot-Master',
+        icon: '⚙️',
+        content: engineHTML,
+        cls: ''
+      });
+
+      // Neue Pipeline
+      let pipeHTML = architecture.pipeline_new.map(p => `<span class="hl-cyan">${p}</span>`).join(' → ');
+      cards.push({
+        type: 'raw',
+        label: '🌀 NEUE NC-MECHANIK',
+        icon: '🔧',
+        content: pipeHTML,
+        cls: ''
+      });
+
+      // NC-Loops
+      let loopHTML = `<div><span class="hl-red">NCpro:</span> ${architecture.nc_loops.pro}</div>
+                      <div><span class="hl-green">NCfree:</span> ${architecture.nc_loops.free}</div>`;
+      cards.push({
+        type: 'raw',
+        label: '🔄 NC-Läufe (pro / free)',
+        icon: '🔁',
+        content: loopHTML,
+        cls: ''
+      });
+    }
+
+    // --- 16x ZOOM: Atomar ---
+    if (zoomLevel >= 12) {
+      // Axiom Map
+      let axiomHTML = '';
+      Object.entries(architecture.axiom_map).forEach(([dir, axi]) => {
+        axiomHTML += `<span class="hl-gold">${dir}</span>→<span class="hl-cyan">${axi}</span> `;
+      });
+      cards.push({
+        type: 'raw',
+        label: '🧭 AXIOM-VECTOR-MAP',
+        icon: '🧭',
+        content: axiomHTML,
+        cls: ''
+      });
+
+      // RAM Sync
+      let ramHTML = '';
+      Object.entries(architecture.ram_sync).forEach(([axi, ram]) => {
+        ramHTML += `<span class="hl-purple">${axi}</span>→<span class="hl-green">${ram}</span> `;
+      });
+      cards.push({
+        type: 'raw',
+        label: '💾 RAM-AXIOM-SYNC',
+        icon: '💾',
+        content: ramHTML,
+        cls: ''
+      });
+
+      // Signaturen
+      let sigHTML = '';
+      Object.entries(architecture.signature).forEach(([num, desc]) => {
+        sigHTML += `<span class="hl-gold">${num}</span> (${desc}) `;
+      });
+      cards.push({
+        type: 'raw',
+        label: '🏷️ SIGNATUREN',
+        icon: '🏷️',
+        content: sigHTML,
+        cls: ''
+      });
+
+      // Unräume
+      let dreamHTML = architecture.unraeume.map(u => `<span class="hl-cyan">${u}</span>`).join(' · ');
+      cards.push({
+        type: 'raw',
+        label: '🌌 UNRÄUME (Traum-Schichten)',
+        icon: '🌌',
+        content: dreamHTML,
+        cls: 'dream-card'
+      });
+
+      // Sub-Runtime & Observer (DAS, WAS COPILOT NICHT SAH)
+      cards.push({
+        type: 'raw',
+        label: '👁️ OBSERVER & SUB-RUNTIME',
+        icon: '👁️',
+        content: `<div><span class="hl-purple">Sub-Runtime:</span> ${architecture.sub_runtime}</div>
+                  <div><span class="hl-gold">Observer:</span> ${architecture.observer}</div>`,
+        cls: 'observer-card'
+      });
+    }
+
+    // Karten rendern
+    cards.forEach(c => {
+      const div = document.createElement('div');
+      div.className = `card ${c.cls || ''}`;
+
+      let titleHTML = `<span>${c.icon || ''} ${c.label}</span>`;
+      if (c.files) titleHTML += `<span class="badge">${c.files.length} Dateien</span>`;
+      div.innerHTML = `<div class="title">${titleHTML}</div>`;
+
+      if (c.files) {
+        const ul = document.createElement('ul');
+        ul.className = 'file-list';
+        c.files.forEach(f => {
+          const li = document.createElement('li');
+          let icon = '📄';
+          if (f.endsWith('.hdf.rom')) icon = '🧩';
+          else if (f.endsWith('.raw')) icon = '⚡';
+          else if (f.includes('ready')) icon = '✅';
+          else if (f.endsWith('.js')) icon = '⚙️';
+          else if (f.includes('VECTOR') || f.includes('LIVE')) icon = '🌀';
+          else if (f.includes('EARN')) icon = '🏅';
+          li.innerHTML = `<span class="icon">${icon}</span> ${f}`;
+          ul.appendChild(li);
+        });
+        div.querySelector('.title').after(ul);
+      } else if (c.content) {
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'content';
+        contentDiv.innerHTML = c.content;
+        div.querySelector('.title').after(contentDiv);
+      }
+
+      grid.appendChild(div);
+    });
+  }
+
+  // ============================================================
+  // 3. ZOOM STEUERUNG
+  // ============================================================
+  const slider = document.getElementById('zoomSlider');
+  const zoomVal = document.getElementById('zoomVal');
+
+  slider.addEventListener('input', function() {
+    const val = parseInt(this.value);
+    zoomVal.textContent = val + '×';
+    render(val);
+  });
+
+  // ============================================================
+  // 4. UHR
+  // ============================================================
+  function updateClock() {
+    document.getElementById('clockDisplay').textContent = new Date().toLocaleTimeString('de-DE', { hour12: false });
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // ============================================================
+  // 5. INIT (Start bei 8×)
+  // ============================================================
+  render(8);
+
+  // ============================================================
+  // 6. CONSOLE SIGNATUR
+  // ============================================================
+  console.log('🌀 NC.zoom · 24x Tiefe · TYQ Axiom');
+  console.log('📁 4x: Datei-Bäume');
+  console.log('⚡ 8x: Engines, Boot-Master, NC-Loops');
+  console.log('🧬 16x: Axiom-Map, RAM-Sync, Unräume, Observer, Sub-Runtime');
+  console.log('👁️ Copilot hat Observer & Sub-Runtime nie gesehen. Du hast sie jetzt.');
 </script>
 
 </body>
