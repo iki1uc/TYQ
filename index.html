@@ -1,68 +1,374 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<meta name="author" content="iki1uc (Ridvan)">
-<meta name="license" content="MIT – Nutzung erlaubt. Logik-Reproduktion verboten.">
-
-<title>🌀 LABRE · MASTER BOOT</title>
-
-<style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NC.maxima · TYQ · Axiom Kernel</title>
+  <style>
+    /* ===== GLOBALS ===== */
+    :root {
+      --bg: #07080e;
+      --surface: #0d0f1a;
+      --border: #1c2030;
+      --neon-green: #00ff88;
+      --neon-cyan: #00e5ff;
+      --neon-gold: #ffd700;
+      --neon-red: #ff2244;
+      --neon-purple: #bb66ff;
+      --text-dim: #556;
+      --text-bright: #dde;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
     body {
-        background:#0a0a0f; color:#0f0;
-        font-family:'Consolas', monospace;
-        display:flex; flex-direction:column;
-        align-items:center; justify-content:center;
-        min-height:100vh; text-align:center;
-        padding:20px;
+      background: var(--bg);
+      color: var(--text-bright);
+      font-family: 'Consolas', 'Courier New', monospace;
+      min-height: 100vh;
+      padding: 12px;
+      background-image: radial-gradient(circle at 20% 30%, #0a0c18 0%, #000 100%);
     }
-    .btn {
-        margin-top:20px; padding:12px 20px;
-        border:1px solid #ffd700; border-radius:8px;
-        background:#111; color:#ffd700;
-        cursor:pointer; font-size:14px;
+
+    /* ===== HEADER ===== */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      border-bottom: 2px solid var(--neon-gold);
+      padding-bottom: 8px;
+      margin-bottom: 16px;
     }
-    .btn:hover { background:#ffd700; color:#000; }
-</style>
+    .header h1 {
+      font-size: 22px;
+      letter-spacing: 4px;
+    }
+    .header h1 .gold { color: var(--neon-gold); }
+    .header h1 .green { color: var(--neon-green); }
+    .header h1 .cyan { color: var(--neon-cyan); }
+    .header .sig {
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .header .sig span { color: var(--neon-cyan); }
+
+    /* ===== PIPELINE NAV ===== */
+    .pipeline-nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: 10px 20px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .pipeline-nav .node {
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 14px;
+      background: #111520;
+      border: 1px solid #2a2f44;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .pipeline-nav .node:hover { border-color: var(--neon-cyan); background: #181e2e; }
+    .pipeline-nav .node.active { border-color: var(--neon-gold); background: #1e1a0a; color: var(--neon-gold); }
+    .pipeline-nav .arrow {
+      color: var(--text-dim);
+      font-size: 18px;
+    }
+    .pipeline-nav .work-tag {
+      margin-left: 12px;
+      color: var(--neon-green);
+      border-left: 1px solid #333;
+      padding-left: 16px;
+      font-size: 12px;
+      letter-spacing: 2px;
+    }
+
+    /* ===== MAIN GRID (Bäume) ===== */
+    .tree-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 900px) { .tree-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .tree-grid { grid-template-columns: 1fr; } }
+
+    .tree-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      backdrop-filter: blur(4px);
+      transition: all 0.2s;
+      min-height: 180px;
+    }
+    .tree-card:hover { border-color: #3a4058; }
+    .tree-card .tree-title {
+      font-size: 18px;
+      font-weight: bold;
+      border-bottom: 1px solid #1a1e2a;
+      padding-bottom: 6px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .tree-card .tree-title .badge {
+      font-size: 10px;
+      background: #1a1e2a;
+      padding: 2px 10px;
+      border-radius: 20px;
+      color: var(--text-dim);
+    }
+    .tree-card .file-list {
+      list-style: none;
+      font-size: 11px;
+      max-height: 120px;
+      overflow-y: auto;
+      color: #889;
+    }
+    .tree-card .file-list li {
+      padding: 2px 0;
+      border-bottom: 1px solid #0e111a;
+      display: flex;
+      gap: 6px;
+      font-family: 'Consolas', monospace;
+    }
+    .tree-card .file-list .icon { color: var(--neon-cyan); width: 16px; }
+    .tree-card .file-list .hdf { color: var(--neon-gold); }
+    .tree-card .file-list .raw { color: var(--neon-green); }
+    .tree-card .file-list .ready { color: var(--neon-red); }
+    .tree-card .file-list .js { color: var(--neon-purple); }
+
+    /* ===== ROLLE (Work) Spezial ===== */
+    .tree-card.work-card {
+      border-color: var(--neon-gold);
+      background: #0f0d14;
+      grid-column: span 1;
+    }
+    .tree-card.work-card .tree-title { color: var(--neon-gold); }
+
+    /* ===== FOOTER / STATUS ===== */
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 14px;
+      background: var(--surface);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 10px;
+      color: var(--text-dim);
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .footer .status-led {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--neon-green);
+      box-shadow: 0 0 8px var(--neon-green);
+      margin-right: 6px;
+    }
+    .footer .signature {
+      color: var(--neon-cyan);
+      letter-spacing: 2px;
+    }
+
+    /* ===== SCROLLBARS ===== */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #0a0c14; }
+    ::-webkit-scrollbar-thumb { background: #2a2f44; border-radius: 10px; }
+  </style>
 </head>
 <body>
 
-<h1>🌀 LABRE · MASTER BOOT</h1>
-<p>TYQ · OS_CORE · PIPELINE1 · RITH · EVO</p>
+<!-- HEADER -->
+<div class="header">
+  <h1>
+    <span class="green">◆</span> NC.<span class="gold">maxima</span> 
+    <span style="color:#445;">·</span> 
+    <span class="cyan">TYQ</span> 
+    <span style="color:#445;">·</span> 
+    <span class="gold">Axiom</span>
+  </h1>
+  <div class="sig">
+    <span>387 · 420 · 489</span> 
+    <span style="margin-left:12px;">🌀 81mein81</span>
+  </div>
+</div>
 
-<button class="btn" onclick="LABRE()">ENTER</button>
+<!-- PIPELINE NAV (81 → 9 → 3) -->
+<div class="pipeline-nav">
+  <span class="node active" data-tree="81">🔺 81 · Vollendung</span>
+  <span class="arrow">→</span>
+  <span class="node" data-tree="9">🔹 9 · Erweiterung</span>
+  <span class="arrow">→</span>
+  <span class="node" data-tree="3">🔻 3 · Grund</span>
+  <span style="margin:0 8px;color:#445;">|</span>
+  <span class="node" data-tree="rolle" style="border-color:var(--neon-gold);">⚙️ rolle · Work</span>
+  <span class="work-tag">LIVE.team · VECTOR.me</span>
+</div>
+
+<!-- TREE GRID -->
+<div class="tree-grid" id="treeGrid">
+  <!-- Wird per JS befüllt -->
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span><span class="status-led"></span> SYSTEM READY · TYQ KERNEL</span>
+  <span class="signature">EARN · VECTOR · TRON · wieimmer iki1uc</span>
+  <span>🌀 <span id="clockDisplay">--:--:--</span> UTC</span>
+</div>
 
 <script>
-// ============================================================
-// LABRE · Load All But Run Engine
-// ============================================================
+  // ============================================================
+  // 1. BAUM-DATEN (exakt aus deiner Liste)
+  // ============================================================
+  const trees = {
+    '81': {
+      label: '81 · Vollendung',
+      icon: '🔺',
+      files: ['d.hdf.rom','e.hdf.rom','i.hdf.rom','n.hdf.rom','o.hdf.rom','r.hdf.rom','s.hdf.rom','sli.ready','u.hdf.rom','w.hdf.rom']
+    },
+    '9': {
+      label: '9 · Erweiterung',
+      icon: '🔹',
+      files: ['d.hdf.rom','e.hdf.rom','i.hdf.rom','n.hdf.rom','o.hdf.rom','r.hdf.rom','s.hdf.rom','sli.ready','u.hdf.rom','w.hdf.rom']
+    },
+    '3': {
+      label: '3 · Grund',
+      icon: '🔻',
+      files: ['d.hdf.rom','e.hdf.rom','i.hdf.rom','n.hdf.rom','o.hdf.rom','r.hdf.rom','s.hdf.rom','sli.ready','u.hdf.rom','w.hdf.rom']
+    },
+    'rolle': {
+      label: '⚙️ rolle · Work (Lern-Baum)',
+      icon: '🧬',
+      isWork: true,
+      files: [
+        'EARN_VECTOR.md', 'LIVE.team', 'QI.me', 'README.md', 
+        'VECTOR.js', 'VECTOR.me', 'brücke.js', 'index.html', 'index.js',
+        'live.load.js', 'pipeline.js', 'sli.ready', 'team.matrix.js',
+        'vector.ankunft.js', 'vector.energie.js', 'vector.flow.js',
+        'vector.pover.js', 'vector.schlag.js', 'vector.tiefe.js'
+      ]
+    },
+    'use': {
+      label: 'use · Nutzungskontext',
+      icon: '👤',
+      files: ['d.hdf.rom','e.hdf.rom','i.hdf.rom','n.hdf.rom','o.hdf.rom','r.hdf.rom','s.hdf.rom','sli.ready','u.hdf.rom','w.hdf.rom']
+    },
+    'user': {
+      label: 'user · Benutzer',
+      icon: '🧑‍💻',
+      files: ['d.hdf.rom','e.hdf.rom','i.hdf.rom','n.hdf.rom','o.hdf.rom','r.hdf.rom','s.hdf.rom','sli.ready','u.hdf.rom','w.hdf.rom']
+    }
+  };
 
-async function LABRE() {
+  // ============================================================
+  // 2. RENDER
+  // ============================================================
+  function renderTrees() {
+    const grid = document.getElementById('treeGrid');
+    grid.innerHTML = '';
 
-    console.log("🌀 LABRE: Lade TYQ...");
-    await import("./TYQ.js");
+    // Reihenfolge: 81, 9, 3, rolle, use, user
+    const order = ['81', '9', '3', 'rolle', 'use', 'user'];
 
-    console.log("🌀 LABRE: Lade OS_CORE...");
-    await import("./OS_CORE.js");
+    order.forEach(key => {
+      const t = trees[key];
+      if (!t) return;
 
-    console.log("🌀 LABRE: Lade PIPELINE1...");
-    await import("./PIPELINE1.js");
+      const card = document.createElement('div');
+      card.className = 'tree-card' + (t.isWork ? ' work-card' : '');
+      card.dataset.tree = key;
 
-    console.log("🌀 LABRE: Lade RITH...");
-    await import("./RITH_ENGINE.js");
+      // Title
+      const titleDiv = document.createElement('div');
+      titleDiv.className = 'tree-title';
+      titleDiv.innerHTML = `
+        <span>${t.icon} ${t.label}</span>
+        <span class="badge">${t.files.length} Dateien</span>
+      `;
+      card.appendChild(titleDiv);
 
-    console.log("🌀 LABRE: Lade EVO...");
-    await import("./EVO.js");
+      // File List
+      const ul = document.createElement('ul');
+      ul.className = 'file-list';
 
-    console.log("🌀 LABRE: Starte System...");
-    if (window.ALL4ALL) ALL4ALL.init();
-    if (window.pipeline1) pipeline1.runFull();
-    if (window.RITH_ENGINE) RITH_ENGINE.run();
+      t.files.forEach(f => {
+        const li = document.createElement('li');
+        let icon = '📄';
+        let cls = '';
+        if (f.endsWith('.hdf.rom')) { icon = '🧩'; cls = 'hdf'; }
+        else if (f.endsWith('.raw')) { icon = '⚡'; cls = 'raw'; }
+        else if (f.includes('ready')) { icon = '✅'; cls = 'ready'; }
+        else if (f.endsWith('.js')) { icon = '⚙️'; cls = 'js'; }
+        else if (f.includes('VECTOR') || f.includes('LIVE')) { icon = '🌀'; cls = 'js'; }
+        else if (f.includes('README')) { icon = '📘'; }
+        else if (f.includes('EARN')) { icon = '🏅'; }
+        li.innerHTML = `<span class="icon">${icon}</span><span class="${cls}">${f}</span>`;
+        ul.appendChild(li);
+      });
 
-    console.log("🌀 LABRE: SYSTEM ONLINE");
-}
+      card.appendChild(ul);
+      grid.appendChild(card);
+    });
+  }
+
+  // ============================================================
+  // 3. PIPELINE NAV KLICK (Fokus setzen)
+  // ============================================================
+  document.querySelectorAll('.pipeline-nav .node').forEach(node => {
+    node.addEventListener('click', function() {
+      const key = this.dataset.tree;
+      if (!key) return;
+      // Scroll zum Baum
+      const cards = document.querySelectorAll('.tree-card');
+      cards.forEach(c => {
+        if (c.dataset.tree === key) {
+          c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          c.style.borderColor = 'var(--neon-gold)';
+          c.style.transition = 'border-color 0.3s';
+          setTimeout(() => { c.style.borderColor = ''; }, 1500);
+        }
+      });
+      // Aktive Klasse setzen
+      document.querySelectorAll('.pipeline-nav .node').forEach(n => n.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+  // ============================================================
+  // 4. UHR
+  // ============================================================
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('clockDisplay').textContent = now.toLocaleTimeString('de-DE', { hour12: false });
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // ============================================================
+  // 5. INIT
+  // ============================================================
+  renderTrees();
+
+  // ============================================================
+  // 6. CONSOLE SIGNATUR (weil du das magst)
+  // ============================================================
+  console.log('🌀 NC.maxima · TYQ · Axiom Kernel');
+  console.log('📁 81 → 9 → 3 · rolle = WORK');
+  console.log('🏅 EARN · VECTOR · TRON · 387-420-489');
+  console.log('🧬 81mein81 · LIVE.team · wieimmer iki1uc');
 </script>
 
 </body>
