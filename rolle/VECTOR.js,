@@ -1,0 +1,82 @@
+// VECTOR.js
+// Voller VECTOR‑Support für dein System – 12d‑Erweiterung
+
+const FAIL_NEUTRAL = require("./fail.neutral.js");
+
+// 1. QI = Reinheit des Tatbestands
+function QI(rolle, ort, home) {
+    try {
+        return rolle + ort + home;
+    } catch (error) {
+        return FAIL_NEUTRAL(error);
+    }
+}
+
+// 2. IQQ = Reinheit des Vorgangs
+function IQQ(suite, bildung) {
+    try {
+        return suite + bildung;
+    } catch (error) {
+        return FAIL_NEUTRAL(error);
+    }
+}
+
+// 3. ENGINE = Kraft, die VECTOR antreibt
+function ENGINE(qi, iqq) {
+    try {
+        return qi * 0.6 + iqq * 0.4; // Gewichtung deiner Logik
+    } catch (error) {
+        return FAIL_NEUTRAL(error);
+    }
+}
+
+// Raum-Zuweisung nach 387 / 420 / 489
+function RAUM(wert) {
+    if (wert < 387) return "Unterraum";
+    if (wert < 420) return "Mittelraum";
+    if (wert < 489) return "Überraum";
+    return "Überraum+";
+}
+
+// Zeichen-Zuweisung
+function ZEICHEN(wert) {
+    if (wert < 387) return 387;
+    if (wert < 420) return 420;
+    return 489;
+}
+
+// 4. VECTOR = Bewegung aus EARN + QI + IQQ
+function VECTOR(qi, iqq) {
+    try {
+        const engine = ENGINE(qi, iqq);
+        const richtung = qi - iqq; // deine Achsenlogik (9‑Achse)
+        const ausgang = engine + richtung;
+
+        return {
+            typ: "vector",
+            engine,
+            richtung,
+            ausgang,
+
+            // 12d‑Erweiterung
+            achse: 9,
+            signatur: "4-8",
+            muster: "81mein81",
+
+            raum: RAUM(ausgang),
+            zeichen: ZEICHEN(ausgang)
+        };
+    } catch (error) {
+        return FAIL_NEUTRAL(error);
+    }
+}
+
+// 5. Continuum‑Zugang
+function continuum(qi, iqq) {
+    try {
+        const summe = qi + iqq;
+
+        let status =
+            summe > 20 ? "Seidene Pfaden – Continuum geöffnet" :
+            summe > 10 ? "Continuum geöffnet" :
+            summe > 0  ? "Continuum möglich – aber
